@@ -122,7 +122,11 @@ where
 
     /// Obtain a reference to an item in the MultiMap using the primary key,
     /// just like a HashMap.
-    pub fn get(&self, key: &K1) -> Option<&V> {
+    pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&V>
+    where
+        K1: Borrow<Q>,
+        Q: Hash + Eq,
+    {
         let mut result = None;
         if let Some(pair) = self.value_map.get(key) {
             result = Some(&pair.1)
@@ -132,7 +136,11 @@ where
 
     /// Obtain a mutable reference to an item in the MultiMap using the
     /// primary key, just like a HashMap.
-    pub fn get_mut(&mut self, key: &K1) -> Option<&mut V> {
+    pub fn get_mut<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
+    where
+        K1: Borrow<Q>,
+        Q: Hash + Eq,
+    {
         let mut result = None;
         if let Some(pair) = self.value_map.get_mut(key) {
             result = Some(&mut pair.1)
@@ -142,7 +150,11 @@ where
 
     /// Obtain a reference to an item in the MultiMap using the secondary key.
     /// Ordinary HashMaps can't do this.
-    pub fn get_alt(&self, key: &K2) -> Option<&V> {
+    pub fn get_alt<Q: ?Sized>(&self, key: &Q) -> Option<&V>
+    where
+        K2: Borrow<Q>,
+        Q: Hash + Eq,
+    {
         let mut result = None;
         if let Some(key_a) = self.key_map.get(key) {
             if let Some(pair) = self.value_map.get(key_a) {
@@ -154,7 +166,11 @@ where
 
     /// Obtain a mutable reference to an item in the MultiMap using the
     /// secondary key. Ordinary HashMaps can't do this.
-    pub fn get_mut_alt(&mut self, key: &K2) -> Option<&mut V> {
+    pub fn get_mut_alt<Q: ?Sized>(&mut self, key: &Q) -> Option<&mut V>
+    where
+        K2: Borrow<Q>,
+        Q: Hash + Eq,
+    {
         let mut result = None;
         if let Some(key_a) = self.key_map.get(key) {
             if let Some(pair) = self.value_map.get_mut(key_a) {
