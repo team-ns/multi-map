@@ -127,11 +127,7 @@ where
         K1: Borrow<Q>,
         Q: Hash + Eq,
     {
-        let mut result = None;
-        if let Some(pair) = self.value_map.get(key) {
-            result = Some(&pair.1)
-        }
-        result
+        self.value_map.get(key).map(|pair| &pair.1)
     }
 
     /// Obtain a mutable reference to an item in the MultiMap using the
@@ -141,11 +137,7 @@ where
         K1: Borrow<Q>,
         Q: Hash + Eq,
     {
-        let mut result = None;
-        if let Some(pair) = self.value_map.get_mut(key) {
-            result = Some(&mut pair.1)
-        }
-        result
+        self.value_map.get_mut(key).map(|pair| &mut pair.1)
     }
 
     /// Obtain a reference to an item in the MultiMap using the secondary key.
@@ -155,13 +147,11 @@ where
         K2: Borrow<Q>,
         Q: Hash + Eq,
     {
-        let mut result = None;
-        if let Some(key_a) = self.key_map.get(key) {
-            if let Some(pair) = self.value_map.get(key_a) {
-                result = Some(&pair.1)
-            }
-        }
-        result
+        self.key_map
+            .get(key)
+            .map(|key_a| self.value_map.get(key_a))
+            .flatten()
+            .map(|pair| &pair.1)
     }
 
     /// Obtain a mutable reference to an item in the MultiMap using the
@@ -171,13 +161,10 @@ where
         K2: Borrow<Q>,
         Q: Hash + Eq,
     {
-        let mut result = None;
-        if let Some(key_a) = self.key_map.get(key) {
-            if let Some(pair) = self.value_map.get_mut(key_a) {
-                result = Some(&mut pair.1)
-            }
+        match self.key_map.get(key) {
+            Some(key_a) => self.value_map.get_mut(key_a).map(|pair| &mut pair.1),
+            None => None,
         }
-        result
     }
 
     /// Remove an item from the HashMap using the primary key. The value for the
@@ -188,12 +175,10 @@ where
         K1: Borrow<Q>,
         Q: Hash + Eq,
     {
-        let mut result = None;
-        if let Some(pair) = self.value_map.remove(key) {
+        self.value_map.remove(key).map(|pair| {
             self.key_map.remove(&pair.0);
-            result = Some(pair.1)
-        }
-        result
+            pair.1
+        })
     }
 
     /// Returns true if the map contains a value for the specified key. The key may be any borrowed
@@ -259,13 +244,11 @@ where
         K2: Borrow<Q>,
         Q: Hash + Eq,
     {
-        let mut result = None;
-        if let Some(key_a) = self.key_map.remove(key) {
-            if let Some(pair) = self.value_map.remove(&key_a) {
-                result = Some(pair.1)
-            }
-        }
-        result
+        self.key_map
+            .remove(key)
+            .map(|key_a| self.value_map.remove(&key_a))
+            .flatten()
+            .map(|pair| pair.1)
     }
 
     /// Iterate through all the values in the MultiMap in random order.
