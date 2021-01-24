@@ -33,9 +33,9 @@
 //! map.insert(1, ThingIndex::IndexOne, "Chicken Fried Steak");
 //! map.insert(2, ThingIndex::IndexTwo, "Blueberry Pancakes");
 //!
-//! assert!(*map.get_alt(&ThingIndex::IndexOne).unwrap() == "Chicken Fried Steak");
-//! assert!(*map.get(&2).unwrap() == "Blueberry Pancakes");
-//! assert!(map.remove_alt(&ThingIndex::IndexTwo).unwrap() == "Blueberry Pancakes");
+//! assert_eq!(*map.get_alt(&ThingIndex::IndexOne).unwrap(), "Chicken Fried Steak");
+//! assert_eq!(*map.get(&2).unwrap(), "Blueberry Pancakes");
+//! assert_eq!(map.remove_alt(&ThingIndex::IndexTwo).unwrap(), "Blueberry Pancakes");
 //! # }
 //! ```
 
@@ -409,8 +409,8 @@ impl<K1, K2, V> Iterator for IntoIter<K1, K2, V> {
 ///     2, ThingIndex::IndexTwo => "Blueberry Pancakes",
 /// };
 ///
-/// assert!(*map.get_alt(&ThingIndex::IndexOne).unwrap() == "Chicken Fried Steak");
-/// assert!(*map.get(&2).unwrap() == "Blueberry Pancakes");
+/// assert_eq!(*map.get_alt(&ThingIndex::IndexOne).unwrap(), "Chicken Fried Steak");
+/// assert_eq!(*map.get(&2).unwrap(), "Blueberry Pancakes");
 /// # }
 /// ```
 macro_rules! multimap {
@@ -442,9 +442,9 @@ mod test {
         map.insert(2, "Two", String::from("Zwei"));
         map.insert(3, "Three", String::from("Drei"));
 
-        assert!(*map.get(&1).unwrap() == String::from("Ein"));
-        assert!(*map.get(&2).unwrap() == String::from("Zwei"));
-        assert!(*map.get(&3).unwrap() == String::from("Drei"));
+        assert_eq!(*map.get(&1).unwrap(), String::from("Ein"));
+        assert_eq!(*map.get(&2).unwrap(), String::from("Zwei"));
+        assert_eq!(*map.get(&3).unwrap(), String::from("Drei"));
         assert!(map.contains_key(&1));
         assert!(!map.contains_key(&4));
         assert!(map.contains_key_alt(&"One"));
@@ -452,26 +452,26 @@ mod test {
 
         map.get_mut_alt(&"One").unwrap().push_str("s");
 
-        assert!(*map.get_alt(&"One").unwrap() == String::from("Eins"));
-        assert!(*map.get_alt(&"Two").unwrap() == String::from("Zwei"));
-        assert!(*map.get_alt(&"Three").unwrap() == String::from("Drei"));
+        assert_eq!(*map.get_alt(&"One").unwrap(), String::from("Eins"));
+        assert_eq!(*map.get_alt(&"Two").unwrap(), String::from("Zwei"));
+        assert_eq!(*map.get_alt(&"Three").unwrap(), String::from("Drei"));
 
         map.remove(&3);
 
-        assert!(*map.get_alt(&"One").unwrap() == String::from("Eins"));
-        assert!(*map.get_alt(&"Two").unwrap() == String::from("Zwei"));
-        assert!(map.get_alt(&"Three") == None);
-        assert!(map.get(&3) == None);
+        assert_eq!(*map.get_alt(&"One").unwrap(), String::from("Eins"));
+        assert_eq!(*map.get_alt(&"Two").unwrap(), String::from("Zwei"));
+        assert_eq!(map.get_alt(&"Three"), None);
+        assert_eq!(map.get(&3), None);
 
-        assert!(map.remove_alt(&"Three") == None);
-        assert!(*map.remove_alt(&"One").unwrap() == String::from("Eins"));
+        assert_eq!(map.remove_alt(&"Three"), None);
+        assert_eq!(*map.remove_alt(&"One").unwrap(), String::from("Eins"));
 
         map.get_mut(&2).unwrap().push_str("!");
 
-        assert!(map.get(&1) == None);
-        assert!(*map.get(&2).unwrap() == String::from("Zwei!"));
-        assert!(map.get_alt(&"Three") == None);
-        assert!(map.get(&3) == None);
+        assert_eq!(map.get(&1), None);
+        assert_eq!(*map.get(&2).unwrap(), String::from("Zwei!"));
+        assert_eq!(map.get_alt(&"Three"), None);
+        assert_eq!(map.get(&3), None);
     }
     #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
     struct MultiCount<'a>(i32, &'a str, &'a str);
